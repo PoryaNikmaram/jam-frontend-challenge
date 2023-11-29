@@ -1,16 +1,15 @@
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
-import { useNavigate } from 'react-router-dom'
+import { useLoginMutation } from '../../redux/userApi'
+
+const schema = yup.object().shape({
+  username: yup.string().required('شناسه کاربری الزامی است'),
+  password: yup.string().required('رمز عبور الزامی است'),
+})
 
 function LoginForm() {
-  const navigate = useNavigate()
-
-  const schema = yup.object().shape({
-    username: yup.string().required('شناسه کاربری الزامی است'),
-    password: yup.string().required('رمز عبور الزامی است'),
-  })
-
+  const [login, { isLoading, isFetching }] = useLoginMutation()
   const {
     register,
     handleSubmit,
@@ -19,8 +18,16 @@ function LoginForm() {
     resolver: yupResolver(schema),
   })
 
-  function onSubmit(data) {
-    console.log(data)
+  async function onSubmit({ username, password }) {
+    const { data, error } = await login({
+      username,
+      password,
+    })
+    if (data) {
+      console.log(data)
+    } else {
+      console.log(error)
+    }
   }
 
   return (
@@ -36,6 +43,7 @@ function LoginForm() {
               errors?.username && 'border-red-600 '
             } border-gray-300 rounded-md text-sm`}
             style={{ direction: 'rtl' }}
+            disabled={isLoading}
           />
           {errors.username && (
             <p className="text-red-600 text-[10px] font-semibold">
@@ -53,6 +61,7 @@ function LoginForm() {
               errors?.password && 'border-red-600'
             } border-gray-300 rounded-md text-sm`}
             style={{ direction: 'rtl' }}
+            disabled={isLoading}
           />
           {errors?.password && (
             <p className="text-red-600 text-[10px] font-semibold">
@@ -63,8 +72,8 @@ function LoginForm() {
 
         <button
           type="submit"
-          className=" bg-gray-950 text-white text-sm mr-auto mt-[52px] px-10 py-1 text-center rounded-md hover:bg-gray-800 transition-all"
-          onClick={() => navigate('/me')}
+          className=" bg-gray-950 text-white text-sm mr-auto mt-[52px] px-10 py-1 text-center rounded-md hover:bg-gray-800 transition-all disabled:cursor-not-allowed disabled:bg-gray-800"
+          disabled={isLoading}
         >
           <p className="mb-2">ورود</p>
         </button>
@@ -82,3 +91,12 @@ function LoginForm() {
 }
 
 export default LoginForm
+
+// console.log(
+//   'data: ',
+//   data,
+//   ' isLoading: ',
+//   isLoading,
+//   ' isFetching: ',
+//   isFetching
+// )

@@ -1,9 +1,6 @@
-import { useGetUsersQuery } from '../../redux/userApi'
 import TableRow from './TableRow'
 
 function AccountTable() {
-  const { data, isLoading } = useGetUsersQuery()
-  console.log(data, isLoading)
   return (
     <div>
       <div

@@ -12,3 +12,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </Provider>
   </React.StrictMode>
 )
+
+// import { createDevTools } from '@redux-devtools/core'
+// import { RtkQueryrMonitor } from '@redux-devtools/rtk-query-monitor'
+
+// export default createDevTools(<RtkQueryrMonitor />)

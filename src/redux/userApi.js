@@ -3,7 +3,7 @@ import { gql } from '@apollo/client'
 
 export const userApi = createApi({
   reducerPath: 'userApi',
-  baseQuery: fetchBaseQuery({ baseUrl: 'http://188.121.106.177:4000/' }),
+  baseQuery: fetchBaseQuery({ baseUrl: 'http://188.121.106.177:4000' }),
   endpoints: (builder) => ({
     getUsers: builder.query({
       query: () => gql`
@@ -16,6 +16,29 @@ export const userApi = createApi({
           }
         }
       `,
+    }),
+    login: builder.mutation({
+      query: ({ username, password }) => {
+        return {
+          document: gql`
+            mutation login($username: String!, $password: String!) {
+              login(username: $username, password: $password) {
+                token
+                user {
+                  id
+                  username
+                  email
+                  address
+                }
+              }
+            }
+          `,
+          variables: {
+            username,
+            password,
+          },
+        }
+      },
     }),
     createUser: builder.mutation({
       query: (body) => ({
@@ -34,15 +57,76 @@ export const userApi = createApi({
         },
       }),
     }),
+    updateUser: builder.mutation({
+      query: (params) => {
+        const id = params.id
+        const input = params.body
+        return {
+          document: gql`
+            mutation ($id: ID!, $input: UpdateUserInput!) {
+              updateUser(id: $id, input: $input) {
+                id
+                username
+                email
+                address
+              }
+            }
+          `,
+          variables: {
+            id,
+            input,
+          },
+        }
+      },
+    }),
+    deleteUser: builder.mutation({
+      query: (id) => ({
+        document: gql`
+          mutation ($id: ID!) {
+            deleteUser(id: $id) {
+              id
+            }
+          }
+        `,
+        variables: {
+          id,
+        },
+      }),
+    }),
+    getUser: builder.query({
+      query: (id) => ({
+        document: gql`
+          query ($id: ID!) {
+            getUser(id: $id) {
+              id
+              username
+              email
+              address
+            }
+          }
+        `,
+        variables: {
+          id,
+        },
+      }),
+    }),
+    logout: builder.query({
+      query: () => gql`
+        query {
+          logout {
+            message
+          }
+        }
+      `,
+    }),
   }),
 })
-
 export const {
   useGetUsersQuery,
+  useLoginMutation,
   useCreateUserMutation,
   useUpdateUserMutation,
   useDeleteUserMutation,
   useGetUserQuery,
-  useLoginQuery,
   useLogoutQuery,
 } = userApi
