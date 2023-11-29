@@ -19,9 +19,24 @@ export const userApi = createApi({
     }),
     login: builder.mutation({
       query: ({ username, password }) => {
+        // یک نکته چون پروسه لاگین کردن میوتیشن محسوب میشه من از میوتیشن استفاده کردم که بر اساس این کد باید به شکل زیر باشه :
+        // document: gql`
+        //     mutation login($username: String!, $password: String!) {
+        //       login(username: $username, password: $password) {
+        //         token
+        //         user {
+        //           id
+        //           username
+        //           email
+        //           address
+        //         }
+        //       }
+        //     }
+        //   `,
+        // ولی چون بکند از کوئری استفاده کرده منم از کوئری استفاده کردم که فکر میکنم درست نباشه این تیکه کد ممنون میشم یه راهنمایی بکنید
         return {
           document: gql`
-            mutation login($username: String!, $password: String!) {
+            query login($username: String!, $password: String!) {
               login(username: $username, password: $password) {
                 token
                 user {
